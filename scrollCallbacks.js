@@ -3,7 +3,8 @@ window.scrollCallbacks = (function(window, document, undefined){
 
 	function add(pendingCallbacks){
 	//Initialise
-		var debounceTimerId;
+		var throttleTimestamp = 0,
+			debounceTimer;
 
 		function runCallbacks(){
 		//Run callback for elements that are on screen
@@ -46,21 +47,32 @@ window.scrollCallbacks = (function(window, document, undefined){
 					pendingCallbacks.splice(i, 1);
 					if(!pendingCallbacks.length){
 						//console.log( "pendingCallbacks empty - removing event handler" ); 
-						$(window).unbind("scroll.scrollCallbacks", debounceRunCallbacks);
+						$(window).unbind("scroll.scrollCallbacks", throttleRunCallbacks);
 					}
 				}
 			}
 		}
 
-		function debounceRunCallbacks(){
-		//Debounce calls to runCallbacks()
-			if(debounceTimerId)clearTimeout(debounceTimerId);
-			debounceTimerId = setTimeout(runCallbacks, 100);
+		function throttleRunCallbacks(){
+		//Throttle calls to runCallbacks() with debounced final call
+			clearTimeout(debounceTimer);
+			if(+new Date - throttleTimestamp > 250){
+				//console.log( "Running throttled" );
+				runCallbacks();
+				throttleTimestamp = +new Date;
+			}
+			else{
+				debounceTimer = setTimeout(function(){
+					//console.log( "Running debounced" );
+					runCallbacks();
+					throttleTimestamp = +new Date;
+				}, 250);
+			}
 		}
 
 		//Init
 		runCallbacks();
-		$(window).bind("scroll.scrollCallbacks", debounceRunCallbacks);
+		$(window).bind("scroll.scrollCallbacks", throttleRunCallbacks);
 	}
 		
 	/*
