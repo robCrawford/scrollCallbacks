@@ -5,30 +5,11 @@
   Data format:
   `[{el: DOM element, margin: Number, callback: Function}, ...]`  
   `margin` is the distance below the viewport edge that will fire the callback.
-
-  EXAMPLE
-  -------
-	var avatarEls = Array.prototype.slice.call(document.querySelectorAll('.avatar')),
-		elCallbacks = [];
-
-	for(var i=0,len=avatarEls.length;i<len;i++){
-		(function(el){
-			elCallbacks.push({
-				el: el,
-				margin: 100,
-				callback: function(){
-					el.src = img.avatar;
-				}
-			})
-		})(avatarEls[i]);
-	};
-
-	scrollCallbacks.add(elCallbacks);
 */
 (function(window, document, namespace, undefined){
 "use strict";
 
-	function add(pendingCallbacks){
+	function add(pendingCallbacks, throttleDur){
 	//Initialise
 		var throttleTimestamp = 0,
 			debounceTimer;
@@ -73,8 +54,9 @@
 
 		function throttleRunCallbacks(){
 		//Throttle calls to runCallbacks() with debounced final call
+			var dur = throttleDur || 250;
 			clearTimeout(debounceTimer);
-			if(+new Date - throttleTimestamp > 250){
+			if(+new Date - throttleTimestamp > dur){
 				runCallbacks();
 				throttleTimestamp = +new Date;
 			}
@@ -82,7 +64,7 @@
 				debounceTimer = setTimeout(function(){
 					runCallbacks();
 					throttleTimestamp = +new Date;
-				}, 250);
+				}, dur);
 			}
 		}
 
