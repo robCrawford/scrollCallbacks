@@ -33,6 +33,9 @@
 		var throttleTimestamp = 0,
 			debounceTimer;
 
+		//Allow single entry
+		if(!pendingCallbacks.length)pendingCallbacks = [pendingCallbacks];
+
 		function runCallbacks(){
 		//Run callback for elements that are on screen
 			var visibleElIndex = (function() {

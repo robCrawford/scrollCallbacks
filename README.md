@@ -4,7 +4,7 @@ scrollCallbacks
 Run callbacks when elements are scrolled into the viewport.  
 NOTE: array supplied to add() must already be in vertical display order.  
 
-**METHODS**
+**METHODS**  
 *Register an array of element/calback data*  
 `scrollCallbacks.add(Array);`
 
