@@ -10,27 +10,23 @@ NOTE: array supplied to add() must already be in vertical display order.
 
 *Data format:*  
 `[{el: DOM element, margin: Number, callback: Function}, ...]`  
-`margin` is the distance below the viewport edge that will fire the callback.
+`margin` is the distance below the viewport edge that will fire the callback (can be a negative value).
 
 
 ```javascript
 
 //EXAMPLE
-var avatarEls = Array.prototype.slice.call(document.querySelectorAll('.avatar')),
-	elCallbacks = [];
+var elCallbacks = [];
 
-for(var i=0,len=avatarEls.length;i<len;i++){
-	(function(el){
-		elCallbacks.push({
-			el: el,
-			margin: 100,
-			callback: function(){
-				el.src = img.avatar;
-			}
-		})
-	})(avatarEls[i]);
-};
-
+$('.avatar').each(function(i, el){
+	elCallbacks.push({
+		el: el,
+		margin: 100,
+		callback: function(){
+			el.src = $(el).addClass("load");
+		}
+	})
+});
 scrollCallbacks.add(elCallbacks);
 ```
 
