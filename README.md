@@ -5,15 +5,18 @@ Run callbacks when elements are scrolled into the viewport.
 NOTE: array supplied to add() must already be in vertical display order.  
 
 **METHODS**  
-`scrollCallbacks.add(paramsArray, throttleDur);`  
+
+```javascript
+scrollCallbacks.add(paramsArray, throttleDur);
+```  
 *Register an array of element/calback data*  
 
-> *paramsArray:*  
+> *paramsArray*  
 > An array of objects in format: `[{el: DOM element, margin: Number, callback: Function}, ...]`  
-> `margin` is the distance below the viewport edge that will fire the callback (can be a negative value).
+> `margin` is the distance below the viewport edge that will fire the callback (can be a negative value).  
 
-> *throttleDur*
-> Optionally specify how often to run tests when scrolling (defaults to 250ms).
+> *throttleDur*  
+> Optionally specify how often to run tests when scrolling (defaults to 250ms).  
 
 ```javascript
 
