@@ -23,7 +23,7 @@ $('.avatar').each(function(i, el){
 		el: el,
 		margin: 100,
 		callback: function(){
-			el.src = $(el).addClass("load");
+			$(el).addClass("load");
 		}
 	})
 });
