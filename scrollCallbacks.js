@@ -38,7 +38,7 @@
 
 		function runCallbacks(){
 		//Run callback for elements that are on screen
-			var visibleElIndex = (function() {
+			var visibleElIndex = (function(){
 			//Binary search returns index of element at viewport edge, or last element within viewport
 				var low = 0,
 					high = pendingCallbacks.length,
@@ -49,13 +49,11 @@
 						cbParams = pendingCallbacks[i],
 						elPosStatus = getElPosStatus(cbParams.el, cbParams.margin); //Get position status
 
-					if (elPosStatus === -1){
+					if(elPosStatus < 0){
 						lastOnscreenElIndex = i; //Keep for when all elements are onscreen
 						low = i + 1; // Element bottom above win bottom, move low to this index
 					}
-					else if (elPosStatus === 1){
-						high = i; // Element top below win bottom, move high to this index
-					}
+					else if(elPosStatus > 0)high = i; // Element top below win bottom, move high to this index
 					else return i; //Crosses edge, return index
 				}
 				return lastOnscreenElIndex; //No elements at edge - return last el that is onscreen if any
@@ -92,7 +90,7 @@
 		runCallbacks();
 		$(window).bind("scroll.scrollCallbacks", throttleRunCallbacks);
 	}
-		
+
 	/*
 	  Utils
 	*/
@@ -114,5 +112,5 @@
 	(namespace || window).scrollCallbacks = {
 		add: add
 	}
-	
+
 })(window, document);
