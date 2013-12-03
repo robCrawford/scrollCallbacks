@@ -1,4 +1,31 @@
-window.scrollCallbacks = (function(window, document, undefined){
+/*
+  Run callbacks when elements are scrolled into the viewport
+  NOTE: array supplied to add() must already be in vertical display order
+
+  Data format:
+  `[{el: DOM element, margin: Number, callback: Function}, ...]`  
+  `margin` is the distance below the viewport edge that will fire the callback.
+
+  EXAMPLE
+  -------
+	var avatarEls = Array.prototype.slice.call(document.querySelectorAll('.avatar')),
+		elCallbacks = [];
+
+	for(var i=0,len=avatarEls.length;i<len;i++){
+		(function(el){
+			elCallbacks.push({
+				el: el,
+				margin: 100,
+				callback: function(){
+					el.src = img.avatar;
+				}
+			})
+		})(avatarEls[i]);
+	};
+
+	scrollCallbacks.add(elCallbacks);
+*/
+(function(window, document, namespace, undefined){
 "use strict";
 
 	function add(pendingCallbacks){
@@ -9,8 +36,7 @@ window.scrollCallbacks = (function(window, document, undefined){
 		function runCallbacks(){
 		//Run callback for elements that are on screen
 			var visibleElIndex = (function() {
-			//Binary search
-			//Returns index of element at viewport edge, or last element within viewport
+			//Binary search returns index of element at viewport edge, or last element within viewport
 				var low = 0,
 					high = pendingCallbacks.length,
 					lastOnscreenElIndex;
@@ -21,32 +47,23 @@ window.scrollCallbacks = (function(window, document, undefined){
 						elPosStatus = getElPosStatus(cbParams.el, cbParams.margin); //Get position status
 
 					if (elPosStatus === -1){
-						//console.log( i, "is above the fold" ); 
 						lastOnscreenElIndex = i; //Keep for when all elements are onscreen
 						low = i + 1; // Element bottom above win bottom, move low to this index
 					}
 					else if (elPosStatus === 1){
-						//console.log(i, "is below the fold" ); 
 						high = i; // Element top below win bottom, move high to this index
 					}
-					else{
-						//console.log(i, "straddles the fold" );
-						return i; //Straddles edge, return index
-					}
+					else return i; //Crosses edge, return index
 				}
-				//console.log( "No pending el at edge");
-				//if(lastOnscreenElIndex)console.log(lastOnscreenElIndex, "was last pending onscreen" ); 
 				return lastOnscreenElIndex; //No elements at edge - return last el that is onscreen if any
 			})();
 
 			//Run callbacks for visible elements
 			if(visibleElIndex !== undefined){
 				for(var i=visibleElIndex; i>=0; i--){
-					//console.log( "Running callback for", i, "(removed from pendingCallbacks)" ); 
 					pendingCallbacks[i].callback(); 
 					pendingCallbacks.splice(i, 1);
 					if(!pendingCallbacks.length){
-						//console.log( "pendingCallbacks empty - removing event handler" ); 
 						$(window).unbind("scroll.scrollCallbacks", throttleRunCallbacks);
 					}
 				}
@@ -57,13 +74,11 @@ window.scrollCallbacks = (function(window, document, undefined){
 		//Throttle calls to runCallbacks() with debounced final call
 			clearTimeout(debounceTimer);
 			if(+new Date - throttleTimestamp > 250){
-				//console.log( "Running throttled" );
 				runCallbacks();
 				throttleTimestamp = +new Date;
 			}
 			else{
 				debounceTimer = setTimeout(function(){
-					//console.log( "Running debounced" );
 					runCallbacks();
 					throttleTimestamp = +new Date;
 				}, 250);
@@ -80,7 +95,7 @@ window.scrollCallbacks = (function(window, document, undefined){
 	*/
 	function getElPosStatus(el, margin){
 	//Get status of element position
-	//-1 above fold, 0 straddles fold, 1 below fold
+	//-1 above fold, 0 crosses fold, 1 below fold
 		var posData = $(el).offset(),
 			elTop = posData.top,
 			elBottom = posData.top + posData.height,
@@ -92,7 +107,8 @@ window.scrollCallbacks = (function(window, document, undefined){
 		else return 0;
 	}
 
-	return {
+	//Add to namespace
+	(namespace || window).scrollCallbacks = {
 		add: add
 	}
 	
