@@ -90,9 +90,15 @@
 		else return 0;
 	}
 
+	function kill(){
+	//Remove all scroll events
+		return !!$(window).unbind("scroll.scrollCallbacks");
+	}
+
 	//Add to namespace
 	(namespace || window).scrollCallbacks = {
-		add: add
+		add: add,
+		kill: kill
 	}
 
 })(window, document);
