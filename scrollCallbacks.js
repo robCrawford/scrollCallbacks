@@ -9,6 +9,8 @@
 (function(window, document, namespace, undefined){
 "use strict";
 
+	var appName = "scrollCallbacks";
+
 	function add(pendingCallbacks, throttleDur){
 	//Initialise
 		var throttleTimestamp = 0,
@@ -46,7 +48,7 @@
 					pendingCallbacks[i].callback(); 
 					pendingCallbacks.splice(i, 1);
 					if(!pendingCallbacks.length){
-						$(window).unbind("scroll.scrollCallbacks", throttleRunCallbacks);
+						$(window).unbind("scroll." + appName, throttleRunCallbacks);
 					}
 				}
 			}
@@ -70,7 +72,7 @@
 
 		//Init
 		runCallbacks();
-		$(window).bind("scroll.scrollCallbacks", throttleRunCallbacks);
+		$(window).bind("scroll." + appName, throttleRunCallbacks);
 	}
 
 	/*
@@ -79,6 +81,7 @@
 	function getElPosStatus(el, margin){
 	//Get status of element position
 	//-1 above fold, 0 crosses fold, 1 below fold
+		if(!el)throw new Error(appName + " element " + el);
 		var posData = $(el).offset(),
 			elTop = posData.top,
 			elBottom = posData.top + posData.height,
@@ -92,11 +95,11 @@
 
 	function kill(){
 	//Remove all scroll events
-		return !!$(window).unbind("scroll.scrollCallbacks");
+		return !!$(window).unbind("scroll." + appName);
 	}
 
 	//Add to namespace
-	(namespace || window).scrollCallbacks = {
+	(namespace || window)[appName] = {
 		add: add,
 		kill: kill
 	}
