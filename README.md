@@ -3,6 +3,7 @@ scrollCallbacks
 *(Requires jQuery or Zepto, 0.7kB minified)*  
 
 Run callbacks as elements are scrolled into the viewport.  
+Configurable throttling and a DOM binary search help to keep good performance as the window is scrolled.  
 
 .add()
 ------ 
@@ -57,6 +58,18 @@ $('.avatar').each(function(i, el){
 });
 scrollCallbacks.add(callbacks);
 ```
+
+.kill()
+------ 
+*Remove all callbacks*  
+```javascript
+scrollCallbacks.kill();
+```  
+
+This removes all registered scroll events.  
+It can be useful for quitting an app or re-initialising elements.  
+
+------
 
 *NOTE:*  
 The namespace where `scrollCallbacks` is attached should be supplied as the second argument of the wrapping iife (the final parentheses at the end of the file).   
