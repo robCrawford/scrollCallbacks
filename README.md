@@ -1,30 +1,53 @@
 scrollCallbacks
 ===============
+*(Requires jQuery or Zepto, 0.7kB minified)*  
 
-Run callbacks when elements are scrolled into the viewport.  
-NOTE: array supplied to add() must already be in vertical display order.  
+Run callbacks as elements are scrolled into the viewport.  
 
-**METHODS**  
-
+.add()
+------ 
+*Register an array of callbacks*
 ```javascript
-scrollCallbacks.add(paramsArray, throttleDur);
+scrollCallbacks.add(callbacks [, throttleDur]);
 ```  
-*Register an array of element/calback data*  
+> *callbacks*  
+> An array of objects  
+> `[{el: DOM element, margin: Number, callback: Function}, ...]`  
+> NOTE: elements must be added in vertical display order!
 
-> *paramsArray*  
-> An array of objects in format: `[{el: DOM element, margin: Number, callback: Function}, ...]`  
-> `margin` is the distance below the viewport edge that will fire the callback (can be a negative value).  
+>> `margin` is the distance below the viewport edge that will fire the callback (can be a negative value).  
 
 > *throttleDur*  
 > Optionally specify how often to run tests when scrolling (defaults to 250ms).  
 
 ```javascript
-
 //EXAMPLE
-var elCallbacks = [];
+scrollCallbacks.add([
+	{
+		el: $("#area1"),
+		margin: 0,
+		callback: function(){
+			console.log("Area1 onscreen");
+		}
+	},
+	{
+		el: $("#area2"),
+		margin: 0,
+		callback: function(){
+			console.log("Area2 onscreen");
+		}
+	}
+], 100); //Throttle duration
+```
+
+If the same params will be used for many elements, it may be easiest to create them in a loop as below:
+
+```javascript
+//EXAMPLE
+var callbacks = [];
 
 $('.avatar').each(function(i, el){
-	elCallbacks.push({
+	callbacks.push({
 		el: el,
 		margin: 100,
 		callback: function(){
@@ -32,7 +55,7 @@ $('.avatar').each(function(i, el){
 		}
 	})
 });
-scrollCallbacks.add(elCallbacks);
+scrollCallbacks.add(callbacks);
 ```
 
 *NOTE:*  
